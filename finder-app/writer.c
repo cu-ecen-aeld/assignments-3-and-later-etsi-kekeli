@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>
+#include <syslog.h>
 
 char *dirname(char *path)
 {
@@ -22,9 +23,11 @@ char *dirname(char *path)
 
 int main(int argc, char *argv[])
 {
+    openlog("Writer binary", LOG_CONS, LOG_USER);
+
     if (argc != 3)
     {
-        fprintf(stderr, "2 arguments expected but %d given\n", argc - 1);
+        syslog(LOG_ERR, "2 arguments expected but %d given\n", argc - 1);
         exit(1);
     }
 
@@ -32,6 +35,7 @@ int main(int argc, char *argv[])
     if (writefile == NULL)
     {
         perror("malloc");
+        syslog(LOG_ERR, "Memory allocation failed.\n");
         exit(EXIT_FAILURE);
     }
     strcpy(writefile, argv[1]);
@@ -40,6 +44,7 @@ int main(int argc, char *argv[])
     if (writestr == NULL)
     {
         perror("malloc");
+        syslog(LOG_ERR, "Memory allocation failed.\n");
         exit(EXIT_FAILURE);
     }
     strcpy(writestr, argv[2]);
@@ -49,18 +54,21 @@ int main(int argc, char *argv[])
     if (dir || dir == NULL)
     {
         FILE *file = fopen(writefile, "w");
+        syslog(LOG_DEBUG, "Writting %s to %s\n", writestr, writefile);
         fprintf(file, "%s", writestr);
         fclose(file);
+        closedir(dir);
     }
     else if (errno == ENOENT)
     {
-        fprintf(stderr, "The directory '%s' doesn't exist.\n", dir_path);
+        syslog(LOG_ERR, "The directory '%s' doesn't exist.\n", dir_path);
     }
     else
     {
-        fprintf(stderr, "The directory can not be opened for other reasons.\n");
+        syslog(LOG_ERR, "The directory can not be opened for other reasons.\n");
     }
 
+    closelog();
     free(dir_path);
     free(writestr);
     free(writefile);
