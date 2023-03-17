@@ -49,6 +49,7 @@ bool do_exec(int count, ...)
     {
         command[i] = va_arg(args, char *);
     }
+    va_end(args);
     command[count] = NULL;
 
     /*
@@ -66,7 +67,7 @@ bool do_exec(int count, ...)
     if (pid == (pid_t)0)
     {
         execv(command[0], command);
-        va_end(args);
+        perror("\nexecv failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -74,8 +75,6 @@ bool do_exec(int count, ...)
     {
         ret = waitpid(pid, &i, 0);
     }
-
-    va_end(args);
 
     return ret != -1 && WIFEXITED(i) && WEXITSTATUS(i) == EXIT_SUCCESS ? true : false;
 }
@@ -102,6 +101,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     {
         command[i] = va_arg(args, char *);
     }
+    va_end(args);
     command[count] = NULL;
 
     /*
@@ -120,11 +120,12 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         if (dup2(fd, 1) < 0)
         {
             perror("dup2");
-            va_end(args);
+            printf("Fail to change the standard output\n");
             exit(EXIT_FAILURE);
         }
         close(fd);
         execv(command[0], command);
+        perror("\nexecv failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -134,8 +135,6 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     }
 
     close(fd);
-
-    va_end(args);
 
     return ret != -1 && WIFEXITED(i) && WEXITSTATUS(i) == EXIT_SUCCESS ? true : false;
 }
