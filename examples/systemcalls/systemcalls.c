@@ -67,7 +67,7 @@ bool do_exec(int count, ...)
     if (pid == (pid_t)0)
     {
         execv(command[0], command);
-        perror("\nexecv failed\n");
+        perror("\nexecv failed");
         exit(EXIT_FAILURE);
     }
 
@@ -125,7 +125,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         }
         close(fd);
         execv(command[0], command);
-        perror("\nexecv failed\n");
+        perror("\nexecv failed");
         exit(EXIT_FAILURE);
     }
 
