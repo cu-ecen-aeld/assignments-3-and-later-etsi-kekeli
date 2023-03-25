@@ -78,9 +78,8 @@ ${CROSS_COMPILE}readelf -a bin/busybox | grep "program interpreter"
 ${CROSS_COMPILE}readelf -a bin/busybox | grep "Shared library"
 
 # TODO: Add library dependencies to rootfs
-LIB_PATH=${HOME}/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib
-cp ${LIB_PATH}/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
-cp ${LIB_PATH}64/{libm.so.6,libc.so.6,libresolv.so.2} ${OUTDIR}/rootfs/lib64/
+cp ${FINDER_APP_DIR}/libraries/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
+cp ${FINDER_APP_DIR}/libraries/{libm.so.6,libc.so.6,libresolv.so.2} ${OUTDIR}/rootfs/lib64/
 
 # TODO: Make device nodes
 sudo mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
