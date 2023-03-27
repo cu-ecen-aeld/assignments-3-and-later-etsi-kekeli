@@ -22,7 +22,6 @@ void *threadfunc(void *thread_param)
     {
         fprintf(stderr, "Fail to lock the mutex\n");
     }
-    printf("Mutex Locked\n");
 
     usleep(arg->wait_post_mutex);
     rc = pthread_mutex_unlock(arg->mutex);
@@ -30,8 +29,6 @@ void *threadfunc(void *thread_param)
     {
         fprintf(stderr, "Fail to unlock the mutex\n");
     }
-
-    printf("Mutex unlocked\n");
 
     arg->thread_complete_success = true;
 
@@ -60,12 +57,9 @@ bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex, int
     data->wait_pre_mutex = wait_to_obtain_ms * 1000;
     data->wait_post_mutex = wait_to_release_ms * 1000;
 
-    printf("Basic setup done\n");
-
     pthread_t thr[1];
 
     int ret = pthread_create(thr, NULL, threadfunc, (void *)data);
-    printf("Thread created\n");
     *thread = *thr;
     if (ret != 0)
     {
